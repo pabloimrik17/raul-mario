@@ -1,0 +1,30 @@
+---
+import { DateTime } from "luxon";
+export interface Props {
+    createdAt: DateTime;
+    title: string;
+}
+
+const { createdAt, title } = Astro.props;
+---
+
+<div class="event-card failed">
+    <div class="event-content">
+        <h3 class="event-title">{title}</h3>
+        <time class="event-date">{createdAt.toLocaleString(DateTime.DATE_MED)}</time>
+    </div>
+</div>
+
+<style>
+    .event-card.failed {
+        border-left: 4px solid #EF4444;
+        background-color: #FEE2E2;
+    }
+    .event-title {
+        color: #991B1B;
+    }
+    .event-date {
+        color: #DC2626;
+    }
+</style>
+

@@ -1,0 +1,55 @@
+---
+import SuccessEvent from './SuccessEvent.astro';
+import FailedEvent from './FailedEvent.astro';
+import InProgressEvent from './InProgressEvent.astro';
+import WaitingEvent from './WaitingEvent.astro';
+import { DateTime } from "luxon";
+
+export interface Props {
+    createdAt: DateTime;
+    dueDate?: DateTime;
+    title: string;
+    status: 'success' | 'failed' | 'in-progress' | 'waiting';
+}
+
+const { createdAt, dueDate, title, status } = Astro.props;
+---
+
+<div class="event-card-wrapper">
+    {status === 'success' && <SuccessEvent createdAt={createdAt} title={title} />}
+    {status === 'failed' && <FailedEvent createdAt={createdAt} title={title} />}s
+    <!-- @ts-expect-error: narrow type -->
+    {status === 'in-progress' && <InProgressEvent createdAt={createdAt} dueDate={dueDate} title={title} />}
+    <!-- @ts-expect-error: narrow type -->
+    {status === 'waiting' && <WaitingEvent createdAt={createdAt} dueDate={dueDate} title={title} />}
+</div>
+
+<style>
+    .event-card-wrapper {
+        position: relative;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease-in-out;
+    }
+    .event-card-wrapper:hover {
+        transform: translateY(-5px);
+    }
+    :global(.event-card) {
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    :global(.event-content) {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    :global(.event-title) {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    :global(.event-date) {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+</style>
+

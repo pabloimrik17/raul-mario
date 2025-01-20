@@ -1,37 +1,73 @@
 ---
----
+import Layout from "../layouts/Layout.astro";
+import EventCard from "../components/EventCard.astro";
+import { DateTime } from "luxon";
 
-<html lang="es">
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-	<meta name="viewport" content="width=device-width" />
-	<meta name="generator" content={Astro.generator} />
-	<title>¿Ha hablado Raul con Mario?</title>
-</head>
-<body class="bg-gradient-to-br from-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-4">
-<main class="bg-white bg-opacity-10 backdrop-blur-lg rounded-xl p-8 shadow-2xl max-w-xl w-full">
-	<div class="text-center">
-		<h1 class="text-4xl font-bold text-white mb-6 leading-tight">
-			¿Ha hablado Raul con Mario?
-		</h1>
-		<div class="relative inline-block">
-			<div class="absolute inset-0 bg-red-500 blur"></div>
-			<p class="relative text-6xl font-extrabold text-white z-10 animate-pulse">
-				No
-			</p>
+interface EventHappening {
+	title: string;
+	status:  | "in-progress" | "waiting";
+	createdAt: DateTime;
+	dueDate: DateTime;
+}
+
+interface EventDone {
+	title: string;
+	status: "success" | "failed";
+	createdAt: DateTime;
+	dueDate?: never;
+}
+
+type Event = EventHappening | EventDone;
+
+const events: Event[] = [
+	{
+		createdAt: DateTime.fromObject({
+			day: 18,
+			month: 11,
+			year: 2024,
+		}),
+		title: 'Comer en SushiO',
+		status: 'success'
+	},
+	{
+		createdAt: DateTime.fromObject({
+			day: 10,
+			month: 1,
+			year: 2025,
+		}),
+		title: 'Quedar para cafe/comida',
+		status: 'waiting',
+		dueDate: DateTime.fromObject({
+			day: 31,
+			month: 1,
+			year: 2025,
+		}),
+	},
+];
+---
+<Layout title="Event Timeline">
+	<main class="container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900">
+		<h1 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-gray-100">Event Timeline</h1>
+		<div class="relative">
+			<div class="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-200 dark:bg-gray-700"></div>
+			<div class="space-y-8">
+				{events.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()).map((event) => (
+					<div class="relative">
+						<EventCard
+							title={event.title}
+							status={event.status}
+							createdAt={event.createdAt}
+							dueDate={event.dueDate}
+						/>
+					</div>
+				))}
+			</div>
 		</div>
-	</div>
-</main>
-</body>
-</html>
+	</main>
+</Layout>
 
 <style>
-	@keyframes subtle-bounce {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(-10px); }
-	}
-	.animate-pulse {
-		animation: subtle-bounce 2s infinite;
+	.container {
+		max-width: 800px;
 	}
 </style>
